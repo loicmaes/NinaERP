@@ -1,0 +1,81 @@
+name: Rapport de bug
+description: Utilisez ce formulaire pour signaler un bug
+title: "[Bug] : Description courte du bug"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de prendre le temps de signaler un bug. Veuillez remplir les informations ci-dessous afin que nous puissions mieux comprendre et résoudre le problème.
+
+  - type: input
+    id: description
+    attributes:
+      label: "Description du bug"
+      description: "Décrivez le problème rencontré de manière claire et concise."
+      placeholder: "Décrivez ici le bug."
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Étapes pour reproduire"
+      description: "Décrivez les étapes précises qui permettent de reproduire le bug."
+      placeholder: |
+        1. Aller à '...'
+        2. Cliquer sur '...'
+        3. Faire défiler jusqu'à '...'
+        4. Observer l'erreur
+      required: true
+
+  - type: input
+    id: expected
+    attributes:
+      label: "Comportement attendu"
+      description: "Quel résultat attendiez-vous ?"
+      placeholder: "Décrivez ici le comportement attendu."
+      required: true
+
+  - type: input
+    id: actual
+    attributes:
+      label: "Comportement observé"
+      description: "Quel est le résultat réel que vous avez observé ?"
+      placeholder: "Décrivez ici ce qui s'est passé réellement."
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: "Environnement"
+      description: "Dans quel environnement ce bug est-il survenu ?"
+      multiple: false
+      options:
+        - "Production"
+        - "Staging"
+        - "Développement local"
+        - "Autre"
+      required: true
+
+  - type: input
+    id: system_info
+    attributes:
+      label: "Informations système"
+      description: "Indiquez votre système d'exploitation, version de l'application, et tout autre détail pertinent."
+      placeholder: "Exemple : Windows 10, Chrome 89, version de l'application v1.0.0"
+      required: false
+
+  - type: textarea
+    id: additional_info
+    attributes:
+      label: "Informations supplémentaires"
+      description: "Ajoutez toute autre information qui pourrait être utile."
+      placeholder: "Ajoutez des informations contextuelles, des hypothèses ou d'autres détails."
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: "Captures d'écran"
+      description: "Ajoutez des captures d'écran si nécessaire pour mieux illustrer le problème."
+      placeholder: "Collez ou décrivez vos captures d'écran ici."
+      required: false
