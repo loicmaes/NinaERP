@@ -1,7 +1,21 @@
 import { FetchError } from "ofetch";
 import type { User, UserCreationBody } from "~/types/user";
 import toast from "~/composables/toast";
+import { authTokenCookie } from "~/utils/constants";
 
+export const useAuthCookie = () => useCookie(authTokenCookie);
+export async function useUser() {
+  const authToken = useAuthCookie();
+  if (!authToken) return;
+
+  // TODO: recover user by session
+}
+export async function useAuth(connected: boolean) {
+  const user = useState<User>("user");
+
+  if (connected && !user.value) return await navigateTo("/portal/auth/register");
+  if (!connected && user.value) return await navigateTo("/");
+}
 export async function registerAccount(payload: UserCreationBody) {
   try {
     const user = await $fetch<User>("/api/portal/auth/registerAccount", {

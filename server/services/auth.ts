@@ -5,6 +5,19 @@ import { UniqueConstraintError } from "~/types/errors";
 import { createAuthSession } from "~/server/database/repositories/auth";
 import userVerificationCode from "~/server/email/templates/userVerificationCode";
 import { sendMail } from "~/server/services/email";
+import type { AuthSession } from "~/types/auth";
+import { authTokenCookie, userUidCookie } from "~/utils/constants";
+
+const authCookieParams = {
+  path: "/",
+  httpOnly: true,
+  secure: true,
+};
+
+export function setAuthCookies(event: H3Event<Request>, session: AuthSession) {
+  setCookie(event, authTokenCookie, session.authToken, authCookieParams);
+  setCookie(event, userUidCookie, session.userUid, authCookieParams);
+}
 
 export async function registerUser(event: H3Event<Request>, payload: UserCreationBody): Promise<User | undefined> {
   try {
@@ -18,9 +31,10 @@ export async function registerUser(event: H3Event<Request>, payload: UserCreatio
       template,
     }).then();
 
-    await createAuthSession({
+    const session = await createAuthSession({
       userUid: user.uid,
     });
+    setAuthCookies(event, session);
     return user;
   }
   catch (e) {
