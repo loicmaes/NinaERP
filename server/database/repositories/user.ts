@@ -57,6 +57,18 @@ export async function recoverUserByLogin(login: string): Promise<RichUser> {
   if (!user) throw new UserNotFoundError();
   return user as RichUser;
 }
+export async function recoverUserByEmail(email: string): Promise<RichUser> {
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+    include: {
+      userInfo: true,
+    },
+  });
+  if (!user) throw new UserNotFoundError();
+  return user as RichUser;
+}
 export async function verifyEmail(body: UserEmailVerificationBody): Promise<User> {
   const user = await prisma.user.findUnique({
     where: {
