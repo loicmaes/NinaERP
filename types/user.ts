@@ -12,6 +12,7 @@ export interface User {
 }
 export interface RichUser extends User {
   verificationCode: string;
+  password: string;
 }
 export interface UserInfo {
   id: number;
