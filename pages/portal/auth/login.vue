@@ -64,6 +64,18 @@ const onSubmit = handleSubmit(async (values) => {
               </FormControl>
             </FormItem>
           </FormField>
+          <Button
+            variant="link"
+            class="text-muted-foreground self-end -mt-4 -mr-4"
+            as-child
+          >
+            <NuxtLink
+              class="text-end text-sm"
+              to="/portal/auth/password/forget"
+            >
+              J'ai perdu mon mot de passe.
+            </NuxtLink>
+          </Button>
           <div class="flex items-center justify-between">
             <FormField
               v-slot="{ value, handleChange }"
