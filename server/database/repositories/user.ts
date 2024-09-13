@@ -2,12 +2,14 @@ import { Prisma } from "@prisma/client";
 import type { UserCreationBody, RichUser } from "~/types/user";
 import prisma from "~/server/database";
 import { UniqueConstraintError } from "~/types/errors";
+import { hash } from "~/server/services/encryption";
 
 export async function createUser(payload: UserCreationBody): Promise<RichUser> {
   try {
     return await prisma.user.create({
       data: {
         ...payload,
+        password: await hash(payload.password),
         userInfo: {
           create: {
             ...payload.userInfo,
