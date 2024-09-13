@@ -23,7 +23,6 @@ export interface UserInfo {
   createdAt: Date;
   updatedAt: Date;
 }
-
 export interface UserCreationBody {
   login: string;
   email: string;
@@ -44,4 +43,24 @@ export interface UserLoginBody {
   login: string;
   password: string;
   keep?: boolean;
+}
+export interface UserInfoUpdateBody {
+  firstName?: string;
+  lastName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+}
+// PASSWORD RQ
+export interface PasswordResetRq {
+  uid: string;
+  userUid: string;
+  createdAt: Date;
+  expiresAt: Date;
+}
+export interface PasswordResetRqCreationBody {
+  userUid: string;
+}
+export interface PasswordResetRqAnswerBody {
+  uid: string;
+  newPassword: string;
 }
