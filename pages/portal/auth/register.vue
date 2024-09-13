@@ -305,9 +305,9 @@ async function onSubmit(values: any) {
           as-child
         >
           <NuxtLink
-            to="/portal/auth/register"
+            to="/portal/auth/login"
           >
-            Je n'ai pas encore de compte !
+            J'ai déjà un compte !
           </NuxtLink>
         </Button>
       </CardFooter>
