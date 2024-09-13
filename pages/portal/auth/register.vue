@@ -55,8 +55,18 @@ const steps: StepperStep[] = [
 ];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function onSubmit(values: any) {
-  // const { firstName, lastName, login, email, password, contactEmail, contactPhone } = values;
-  console.table(values);
+  const { firstName, lastName, login, email, password, contactEmail, contactPhone } = values;
+  await registerAccount({
+    login,
+    email,
+    password,
+    userInfo: {
+      firstName,
+      lastName,
+      contactEmail,
+      contactPhone,
+    },
+  });
 }
 </script>
 
@@ -82,6 +92,7 @@ async function onSubmit(values: any) {
                 e.preventDefault();
                 validate();
 
+                // noinspection UnreachableCodeJS
                 if (currentStep === steps.length && meta.valid) onSubmit(values);
               }"
             >
@@ -175,7 +186,7 @@ async function onSubmit(values: any) {
                     name="login"
                   >
                     <FormItem>
-                      <FormLabel>Nom d'utilisateur</FormLabel>
+                      <FormLabel>Identifiant</FormLabel>
                       <FormControl v-bind="componentField">
                         <Input placeholder="..." />
                       </FormControl>
