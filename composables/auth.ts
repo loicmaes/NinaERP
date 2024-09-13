@@ -110,3 +110,27 @@ export async function verifyUserEmail(code: string) {
     }
   }
 }
+export async function forgetPasswordRequest(email: string) {
+  try {
+    await $fetch("/api/portal/auth/password/reset/request", {
+      method: "POST",
+      body: {
+        email,
+      },
+    });
+    toast.success({
+      title: "🔔 Driing !",
+      description: "Ta demande de réinitialisation vient d'atterrir dans ta boîte de réception 📥",
+    });
+    await navigateTo("/portal/auth/login");
+  }
+  catch (e) {
+    switch ((e as FetchError).statusCode) {
+      case 404:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Cette adresse e-mail ne correspond à aucun utilisateur de ma base de données...",
+        });
+    }
+  }
+}
