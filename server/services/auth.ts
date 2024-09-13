@@ -1,6 +1,12 @@
 import type { H3Event } from "h3";
 import type { User, UserCreationBody, UserEmailVerificationBody, UserLoginBody } from "~/types/user";
-import { createUser, recoverUser, recoverUserByLogin, verifyEmail } from "~/server/database/repositories/user";
+import {
+  createUser,
+  recoverUser,
+  recoverUserByEmail,
+  recoverUserByLogin,
+  verifyEmail,
+} from "~/server/database/repositories/user";
 import { UniqueConstraintError } from "~/types/errors";
 import { createAuthSession, isAuthenticated, recoverAuthSession } from "~/server/database/repositories/auth";
 import userVerificationCode from "~/server/email/templates/userVerificationCode";
@@ -12,6 +18,8 @@ import { UserNotFoundError } from "~/types/user";
 import userEmailVerified from "~/server/email/templates/userEmailVerified";
 import { verify } from "~/server/services/encryption";
 import dontForgetToVerifyEmail from "~/server/email/templates/dontForgetToVerifyEmail";
+import { createResetRequest, deleteRunningRequest, hasRunningRequest } from "~/server/database/repositories/password";
+import passwordResetRequest from "~/server/email/templates/passwordResetRequest";
 
 const authCookieParams = {
   path: "/",
@@ -133,4 +141,32 @@ export async function verifyUserEmailAddress(body: UserEmailVerificationBody) {
     template: userEmailVerified(user.userInfo?.firstName ?? "undefined"),
   }).then();
   return user;
+}
+
+export async function createPasswordResetRequest(event: H3Event<Request>, email: string) {
+  try {
+    const user = await recoverUserByEmail(email);
+
+    if (await hasRunningRequest(user.uid)) await deleteRunningRequest(user.uid);
+
+    const rq = await createResetRequest({
+      userUid: user.uid,
+    });
+
+    sendMail({
+      to: user.email,
+      subject: "Réinitialisation de ton mot de passe",
+      template: passwordResetRequest(rq.uid),
+    }).then();
+  }
+  catch (e) {
+    if (e instanceof UserNotFoundError) return sendError(event, createError({
+      statusCode: 404,
+      statusMessage: "Cet e-mail n'est lié à aucun utilisateur !",
+    }));
+    return sendError(event, createError({
+      statusCode: 500,
+      statusMessage: "Une erreur est survenue !",
+    }));
+  }
 }
