@@ -1,5 +1,5 @@
-import type { AuthSession, AuthSessionCreationBody } from "~/types/auth";
-import { sessionDuration } from "~/types/auth";
+import type { AuthSession, AuthSessionCreationBody, AuthSessionRecoverBody } from "~/types/auth";
+import { AuthSessionNotFoundError, sessionDuration } from "~/types/auth";
 import prisma from "~/server/database";
 
 export async function createAuthSession(payload: AuthSessionCreationBody): Promise<AuthSession> {
@@ -13,4 +13,19 @@ export async function createAuthSession(payload: AuthSessionCreationBody): Promi
       expiresAt: new Date(Date.now() + (payload.keep ? sessionDuration.week : sessionDuration.hour)),
     },
   });
+}
+export async function recoverAuthSession(payload: AuthSessionRecoverBody): Promise<AuthSession> {
+  const session = await prisma.authSession.findUnique({
+    where: {
+      authToken_userUid: {
+        authToken: payload.authToken,
+        userUid: payload.userUid,
+      },
+      expiresAt: {
+        gt: new Date(),
+      },
+    },
+  });
+  if (!session) throw new AuthSessionNotFoundError();
+  return session;
 }

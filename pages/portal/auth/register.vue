@@ -6,6 +6,8 @@ import { Card, CardContent, CardFooter, CardTitle } from "~/components/ui/card";
 import { Stepper, type StepperStep } from "~/components/ui/stepper";
 import { PASSWORD_REGEXP, PHONE_REGEXP, USERNAME_REGEXP } from "~/utils/regex";
 
+await useAuth(false);
+
 definePageMeta({
   layout: "auth",
 });

@@ -3,6 +3,8 @@ export const sessionDuration = {
   week: 1000 * 60 * 60 * 24 * 7,
 };
 
+export class AuthSessionNotFoundError extends Error {}
+
 export interface AuthSession {
   authToken: string;
   userUid: string;
@@ -12,4 +14,8 @@ export interface AuthSession {
 export interface AuthSessionCreationBody {
   userUid: string;
   keep?: boolean;
+}
+export interface AuthSessionRecoverBody {
+  authToken: string;
+  userUid: string;
 }

@@ -6,9 +6,18 @@ import { authTokenCookie } from "~/utils/constants";
 export const useAuthCookie = () => useCookie(authTokenCookie);
 export async function useUser() {
   const authToken = useAuthCookie();
-  if (!authToken) return;
+  const user = useState<User>("user");
 
-  // TODO: recover user by session
+  if (authToken && !user.value) {
+    const { data } = await useFetch<User>("/api/portal/auth/whoami", {
+      method: "GET",
+      headers: useRequestHeaders(["cookie"]),
+    });
+    if (!data.value) return null;
+    user.value = data.value;
+  }
+
+  return user.value;
 }
 export async function useAuth(connected: boolean) {
   const user = useState<User>("user");

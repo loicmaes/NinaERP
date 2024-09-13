@@ -1,3 +1,5 @@
+export class UserNotFoundError extends Error {}
+
 export interface User {
   uid: string;
   login: string;
