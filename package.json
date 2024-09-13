@@ -25,6 +25,7 @@
     "@nuxtjs/google-fonts": "^3.2.0",
     "@vee-validate/zod": "^4.13.2",
     "@vueuse/core": "^11.0.3",
+    "argon2": "^0.41.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-vue-next": "^0.439.0",
