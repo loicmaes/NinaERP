@@ -38,3 +38,12 @@ export async function recoverAuthSession(payload: AuthSessionRecoverBody): Promi
   if (!session) throw new AuthSessionNotFoundError();
   return session;
 }
+export async function prunedExpiredAuthSessions() {
+  await prisma.authSession.deleteMany({
+    where: {
+      expiresAt: {
+        lte: new Date(),
+      },
+    },
+  });
+}

@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     "@nuxtjs/google-fonts",
     "@nuxtjs/tailwindcss",
     "shadcn-nuxt",
+    "nuxt-scheduler",
   ],
   eslint: {
     checker: true,
