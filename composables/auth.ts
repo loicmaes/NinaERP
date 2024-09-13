@@ -1,5 +1,5 @@
 import { FetchError } from "ofetch";
-import type { User, UserCreationBody } from "~/types/user";
+import type { User, UserCreationBody, UserLoginBody } from "~/types/user";
 import toast from "~/composables/toast";
 import { authTokenCookie } from "~/utils/constants";
 
@@ -51,6 +51,43 @@ export async function registerAccount(payload: UserCreationBody) {
         toast.error({
           title: "💢 Oups...",
           description: "Je n'ai pas pu créer ton compte 😳 Ré-essaye plus tard...",
+        });
+    }
+  }
+}
+export async function loginAccount(payload: UserLoginBody) {
+  try {
+    const user = await $fetch<User>("/api/portal/auth/login", {
+      method: "POST",
+      body: payload,
+    });
+    useState<User>("user").value = user;
+    toast.success({
+      title: "Mais quelle surprise 😱",
+      description: `Heureuse de te revoir parmi nous ${user.userInfo?.firstName} !`,
+    });
+    await navigateTo("/"); // TODO: navigate to user portal
+  }
+  catch (e) {
+    if (!(e instanceof FetchError)) return toast.error({
+      title: "💢 Oups...",
+      description: "Quelque chose s'est mal passé pendant ta tentative de connexion...",
+    });
+    switch (e.statusCode) {
+      case 403:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Tu as du te tromper dans ton mot de passe... Ré-essaye !",
+        });
+      case 404:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Ce nom d'utilisateur n'a aucune correspondance dans ma base de données !",
+        });
+      default:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Quelque chose s'est mal passé pendant ta tentative de connexion...",
         });
     }
   }

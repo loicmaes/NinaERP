@@ -40,3 +40,8 @@ export interface UserEmailVerificationBody {
   userUid: string;
   code: string;
 }
+export interface UserLoginBody {
+  login: string;
+  password: string;
+  keep?: boolean;
+}
