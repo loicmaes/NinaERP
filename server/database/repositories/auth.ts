@@ -2,6 +2,15 @@ import type { AuthSession, AuthSessionCreationBody, AuthSessionRecoverBody } fro
 import { AuthSessionNotFoundError, sessionDuration } from "~/types/auth";
 import prisma from "~/server/database";
 
+export async function isAuthenticated(payload: AuthSessionRecoverBody): Promise<boolean> {
+  try {
+    return !!await recoverAuthSession(payload);
+  }
+  catch (e) {
+    console.log(e);
+    return false;
+  }
+}
 export async function createAuthSession(payload: AuthSessionCreationBody): Promise<AuthSession> {
   return await prisma.authSession.create({
     data: {

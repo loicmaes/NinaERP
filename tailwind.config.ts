@@ -73,12 +73,17 @@ module.exports = {
           from: { height: "var(--radix-collapsible-content-height)" },
           to: { height: 0 },
         },
+        "loading": {
+          from: { rotate: "0deg" },
+          to: { rotate: "360deg" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "collapsible-down": "collapsible-down 0.2s ease-in-out",
         "collapsible-up": "collapsible-up 0.2s ease-in-out",
+        "loading": "loading 0.75s linear infinite",
       },
     },
   },

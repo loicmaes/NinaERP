@@ -1,9 +1,9 @@
 import { Prisma } from "@prisma/client";
-import type { UserCreationBody, RichUser, User } from "~/types/user";
+import type { UserCreationBody, RichUser, User, UserEmailVerificationBody } from "~/types/user";
+import { InvalidVerificationCodeError, UserNotFoundError } from "~/types/user";
 import prisma from "~/server/database";
 import { UniqueConstraintError } from "~/types/errors";
 import { hash } from "~/server/services/encryption";
-import { UserNotFoundError } from "~/types/user";
 
 export async function createUser(payload: UserCreationBody): Promise<RichUser> {
   try {
@@ -44,4 +44,25 @@ export async function recoverUser(userUid: string): Promise<User> {
   });
   if (!user) throw new UserNotFoundError();
   return user as User;
+}
+export async function verifyEmail(body: UserEmailVerificationBody): Promise<User> {
+  const user = await prisma.user.findUnique({
+    where: {
+      uid: body.userUid,
+      verifiedAt: null,
+    },
+  });
+  if (!user) throw new UserNotFoundError();
+  if (user.verificationCode !== body.code) throw new InvalidVerificationCodeError();
+  return await prisma.user.update({
+    data: {
+      verifiedAt: new Date(),
+    },
+    where: {
+      uid: body.userUid,
+    },
+    include: {
+      userInfo: true,
+    },
+  }) as User;
 }

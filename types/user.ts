@@ -1,4 +1,5 @@
 export class UserNotFoundError extends Error {}
+export class InvalidVerificationCodeError extends Error {}
 
 export interface User {
   uid: string;
@@ -33,4 +34,8 @@ export interface UserInfoCreationBody {
   lastName: string;
   contactEmail?: string;
   contactPhone?: string;
+}
+export interface UserEmailVerificationBody {
+  userUid: string;
+  code: string;
 }

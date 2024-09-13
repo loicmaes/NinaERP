@@ -4,6 +4,7 @@ import toast from "~/composables/toast";
 import { authTokenCookie } from "~/utils/constants";
 
 export const useAuthCookie = () => useCookie(authTokenCookie);
+
 export async function useUser() {
   const authToken = useAuthCookie();
   const user = useState<User>("user");
@@ -50,6 +51,24 @@ export async function registerAccount(payload: UserCreationBody) {
         toast.error({
           title: "💢 Oups...",
           description: "Je n'ai pas pu créer ton compte 😳 Ré-essaye plus tard...",
+        });
+    }
+  }
+}
+
+export async function verifyUserEmail(code: string) {
+  try {
+    useState<User>("user").value = await $fetch<User>(`/api/portal/auth/verifyEmail/${code}`, {
+      method: "POST",
+      headers: useRequestHeaders(["cookie"]),
+    });
+  }
+  catch (e) {
+    switch ((e as FetchError).statusCode) {
+      default:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Une erreur est survenue !",
         });
     }
   }

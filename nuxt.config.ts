@@ -26,6 +26,10 @@ export default defineNuxtConfig({
     mailerFromName: "",
     mailerHost: "",
     mailerPort: "",
+
+    public: {
+      platformUrl: "",
+    },
   },
   vite: {
     optimizeDeps: {
