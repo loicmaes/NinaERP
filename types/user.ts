@@ -1,5 +1,6 @@
 export class UserNotFoundError extends Error {}
 export class InvalidVerificationCodeError extends Error {}
+export class PasswordResetRqNotFoundError extends Error {}
 
 export interface User {
   uid: string;

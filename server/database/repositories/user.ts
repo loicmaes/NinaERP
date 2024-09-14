@@ -90,3 +90,18 @@ export async function verifyEmail(body: UserEmailVerificationBody): Promise<User
     },
   }) as User;
 }
+export async function updatePassword(uid: string, newPassword: string): Promise<User> {
+  const user = await prisma.user.update({
+    where: {
+      uid,
+    },
+    data: {
+      password: await hash(newPassword),
+    },
+    include: {
+      userInfo: true,
+    },
+  });
+  if (!user) throw new UserNotFoundError();
+  return user as User;
+}

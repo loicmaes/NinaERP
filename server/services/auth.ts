@@ -4,7 +4,7 @@ import {
   createUser,
   recoverUser,
   recoverUserByEmail,
-  recoverUserByLogin,
+  recoverUserByLogin, updatePassword,
   verifyEmail,
 } from "~/server/database/repositories/user";
 import { UniqueConstraintError } from "~/types/errors";
@@ -14,11 +14,16 @@ import { sendMail } from "~/server/services/email";
 import type { AuthSession, AuthSessionRecoverBody } from "~/types/auth";
 import { authTokenCookie, userUidCookie } from "~/utils/constants";
 import { AuthSessionNotFoundError } from "~/types/auth";
-import { UserNotFoundError } from "~/types/user";
+import { PasswordResetRqNotFoundError, UserNotFoundError } from "~/types/user";
 import userEmailVerified from "~/server/email/templates/userEmailVerified";
 import { verify } from "~/server/services/encryption";
 import dontForgetToVerifyEmail from "~/server/email/templates/dontForgetToVerifyEmail";
-import { createResetRequest, deleteRunningRequest, hasRunningRequest } from "~/server/database/repositories/password";
+import {
+  createResetRequest,
+  deleteRunningRequest,
+  hasRunningRequest,
+  isValidRequest, recoverResetRequest,
+} from "~/server/database/repositories/password";
 import passwordResetRequest from "~/server/email/templates/passwordResetRequest";
 
 const authCookieParams = {
@@ -168,5 +173,47 @@ export async function createPasswordResetRequest(event: H3Event<Request>, email:
       statusCode: 500,
       statusMessage: "Une erreur est survenue !",
     }));
+  }
+}
+export async function tryToUpdateUserPassword(event: H3Event<Request>, code: string, newPassword: string): Promise<User | undefined> {
+  try {
+    if (!await isValidRequest(code)) {
+      sendError(event, createError({
+        statusCode: 404,
+        statusMessage: "La demande n'est pas valide !",
+      }));
+      return;
+    }
+
+    const request = await recoverResetRequest(code);
+    const user = await updatePassword(request.userUid, newPassword);
+
+    const session = await createAuthSession({
+      userUid: user.uid,
+    });
+    setAuthCookies(event, session);
+
+    return user;
+  }
+  catch (e) {
+    if (e instanceof PasswordResetRqNotFoundError) {
+      sendError(event, createError({
+        statusCode: 404,
+        statusMessage: "La requête n'a pas été trouvée ou n'existe pas !",
+      }));
+      return;
+    }
+    if (e instanceof UserNotFoundError) {
+      sendError(event, createError({
+        statusCode: 404,
+        statusMessage: "L'utilisateur lié à cette requête n'a pas été trouvé ou n'existe plus !",
+      }));
+      return;
+    }
+    sendError(event, createError({
+      statusCode: 500,
+      statusMessage: "Une erreur s'est produite !",
+    }));
+    return;
   }
 }

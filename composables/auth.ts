@@ -134,3 +134,32 @@ export async function forgetPasswordRequest(email: string) {
     }
   }
 }
+export async function sendNewPassword(code: string, newPassword: string) {
+  try {
+    useState<User>("user").value = await $fetch<User>(`/api/portal/auth/password/reset/${code}`, {
+      method: "POST",
+      body: {
+        newPassword,
+      },
+    });
+    toast.success({
+      title: "Super 🎉",
+      description: "J'ai mis à jour ton mot de passe et t'ai connecté ! Tu peux à nouveau profiter de mon interface 😊",
+    });
+    await navigateTo("/");
+  }
+  catch (e) {
+    switch ((e as FetchError).statusCode) {
+      case 404:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Je n'ai pas pu trouver la requête ou l'utilisateur qui était lié...",
+        });
+      case 500:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Une erreur s'est produite pendant que j'essaye de mettre à jour ton mot de passe...",
+        });
+    }
+  }
+}
