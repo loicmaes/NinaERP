@@ -29,7 +29,7 @@ import passwordResetRequest from "~/server/email/templates/passwordResetRequest"
 const authCookieParams = {
   path: "/",
   httpOnly: true,
-  secure: true,
+  secure: false, // TODO: true for prod environment
 };
 
 export function setAuthCookies(event: H3Event<Request>, session: AuthSession) {
