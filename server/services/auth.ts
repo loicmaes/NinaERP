@@ -4,7 +4,7 @@ import {
   createUser,
   recoverUser,
   recoverUserByEmail,
-  recoverUserByLogin, recoverUserPassword, updatePassword,
+  recoverUserByLogin, recoverUserPassword, updatePassword, updateUserEmail,
   verifyEmail,
 } from "~/server/database/repositories/user";
 import { UniqueConstraintError } from "~/types/errors";
@@ -14,23 +14,25 @@ import {
   isAuthenticated,
   recoverAuthSession,
 } from "~/server/database/repositories/auth";
-import userVerificationCode from "~/server/email/templates/userVerificationCode";
+import userVerificationCode from "~/server/email/templates/emailAddress/userVerificationCode";
 import { sendMail } from "~/server/services/email";
 import type { AuthSession, AuthSessionRecoverBody } from "~/types/auth";
 import { authTokenCookie, userUidCookie } from "~/utils/constants";
 import { AuthSessionNotFoundError } from "~/types/auth";
 import { PasswordResetRqNotFoundError, UserNotFoundError } from "~/types/user";
-import userEmailVerified from "~/server/email/templates/userEmailVerified";
+import userEmailVerified from "~/server/email/templates/emailAddress/userEmailVerified";
 import { verify } from "~/server/services/encryption";
-import dontForgetToVerifyEmail from "~/server/email/templates/dontForgetToVerifyEmail";
+import dontForgetToVerifyEmail from "~/server/email/templates/emailAddress/dontForgetToVerifyEmail";
 import {
   createResetRequest,
   deleteRunningRequest,
   hasRunningRequest,
   isValidRequest, recoverResetRequest,
 } from "~/server/database/repositories/password";
-import passwordResetRequest from "~/server/email/templates/passwordResetRequest";
-import passwordSuccessfullyReset from "~/server/email/templates/passwordSuccessfullyReset";
+import passwordResetRequest from "~/server/email/templates/password/passwordResetRequest";
+import passwordSuccessfullyReset from "~/server/email/templates/password/passwordSuccessfullyReset";
+import securityEmailUpdate from "~/server/email/templates/emailAddress/securityEmailUpdate";
+import emailUpdatedNeedVerification from "~/server/email/templates/emailAddress/emailUpdatedNeedVerification";
 
 const authCookieParams = {
   httpOnly: true,
@@ -260,5 +262,47 @@ export async function resetUserPassword(event: H3Event<Request>, userUid: string
       statusCode: 500,
       statusMessage: "Une erreur est survenue !",
     }));
+  }
+}
+
+export async function updateEmail(event: H3Event<Request>, userUid: string, email: string): Promise<User | undefined> {
+  try {
+    const oldEmail = (await recoverUser(userUid)).email;
+    if (oldEmail === email) {
+      sendError(event, createError({
+        statusCode: 409,
+        statusMessage: "Tu ne peux pas ajouter la même email.",
+      }));
+      return;
+    }
+    const user = await updateUserEmail(userUid, email);
+
+    sendMail({
+      to: oldEmail,
+      subject: "Alerte de sécurité 🛡️ Changement d'adresse e-mail",
+      template: securityEmailUpdate(user.email),
+    }).then();
+    sendMail({
+      to: user.email,
+      subject: "Changement d'adresse e-mail : Nouvelle vérification requise",
+      template: emailUpdatedNeedVerification(user.verificationCode),
+    }).then();
+
+    return user as User;
+  }
+  catch (e) {
+    console.log(e);
+    if (e instanceof UserNotFoundError) {
+      sendError(event, createError({
+        statusCode: 404,
+        statusMessage: "L'utilisateur n'a pas été trouvé !",
+      }));
+      return;
+    }
+    sendError(event, createError({
+      statusCode: 500,
+      statusMessage: "Une erreur est survenue !",
+    }));
+    return;
   }
 }

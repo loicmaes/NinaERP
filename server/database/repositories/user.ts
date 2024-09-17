@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
-import type { UserCreationBody, RichUser, User, UserEmailVerificationBody } from "~/types/user";
+import { v4 as uuid } from "uuid";
+import type { UserCreationBody, RichUser, User, UserEmailVerificationBody, UserInfoUpdateBody } from "~/types/user";
 import { InvalidVerificationCodeError, UserNotFoundError } from "~/types/user";
 import prisma from "~/server/database";
 import { UniqueConstraintError } from "~/types/errors";
@@ -116,4 +117,30 @@ export async function updatePassword(uid: string, newPassword: string): Promise<
   });
   if (!user) throw new UserNotFoundError();
   return user as User;
+}
+export async function updateUserEmail(uid: string, email: string): Promise<RichUser> {
+  const user = await prisma.user.update({
+    where: {
+      uid,
+    },
+    data: {
+      email,
+      verificationCode: uuid(),
+      verifiedAt: null,
+    },
+    include: {
+      userInfo: true,
+    },
+  });
+  if (!user) throw new UserNotFoundError();
+  return user as RichUser;
+}
+export async function updateUserInfo(uid: string, info: UserInfoUpdateBody): Promise<User> {
+  await prisma.userInfo.update({
+    where: {
+      userUid: uid,
+    },
+    data: info,
+  });
+  return await recoverUser(uid);
 }
