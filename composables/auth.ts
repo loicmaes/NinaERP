@@ -24,7 +24,7 @@ export async function useAuth(connected: boolean) {
   const user = useState<User>("user");
 
   if (connected && !user.value) return await navigateTo("/portal/auth/register");
-  if (!connected && user.value) return await navigateTo("/");
+  if (!connected && user.value) return await navigateTo("/portal/personal/profile/me");
 }
 export async function registerAccount(payload: UserCreationBody) {
   try {

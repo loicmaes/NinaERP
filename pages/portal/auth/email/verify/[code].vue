@@ -66,7 +66,7 @@ onMounted(() => {
           class="mt-6"
           as-child
         >
-          <NuxtLink to="/">
+          <NuxtLink to="/portal/personal/profile/me">
             En avant !
           </NuxtLink>
         </Button>
