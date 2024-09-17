@@ -37,7 +37,7 @@ export async function registerAccount(payload: UserCreationBody) {
       title: `👋 Bienvenue ${user.userInfo?.firstName},`,
       description: "Je t'ai envoyé un e-mail contenant ton lien de vérification, fait-le au plus vite pour débloquer un max de fonctionnalités 🚀",
     });
-    await navigateTo("/"); // TODO: go to user portal
+    await navigateTo("/portal/personal/profile/me");
   }
   catch (e) {
     if (!(e instanceof FetchError)) throw e;
@@ -66,7 +66,7 @@ export async function loginAccount(payload: UserLoginBody) {
       title: "Mais quelle surprise 😱",
       description: `Heureuse de te revoir parmi nous ${user.userInfo?.firstName} !`,
     });
-    await navigateTo("/"); // TODO: navigate to user portal
+    await navigateTo("/portal/personal/profile/me");
   }
   catch (e) {
     if (!(e instanceof FetchError)) return toast.error({
@@ -146,7 +146,7 @@ export async function sendNewPassword(code: string, newPassword: string) {
       title: "Super 🎉",
       description: "J'ai mis à jour ton mot de passe et t'ai connecté ! Tu peux à nouveau profiter de mon interface 😊",
     });
-    await navigateTo("/");
+    await navigateTo("/portal/personal/profile/me");
   }
   catch (e) {
     switch ((e as FetchError).statusCode) {
