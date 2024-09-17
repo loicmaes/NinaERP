@@ -30,6 +30,7 @@ import {
   isValidRequest, recoverResetRequest,
 } from "~/server/database/repositories/password";
 import passwordResetRequest from "~/server/email/templates/passwordResetRequest";
+import passwordSuccessfullyReset from "~/server/email/templates/passwordSuccessfullyReset";
 
 const authCookieParams = {
   httpOnly: true,
@@ -196,6 +197,11 @@ export async function tryToUpdateUserPassword(event: H3Event<Request>, code: str
       userUid: user.uid,
     });
     setAuthCookies(event, session);
+    sendMail({
+      to: user.email,
+      subject: "👏 Félicitation, mot de passe renouvelé !",
+      template: passwordSuccessfullyReset(),
+    }).then();
 
     return user;
   }
@@ -234,6 +240,11 @@ export async function resetUserPassword(event: H3Event<Request>, userUid: string
     }));
     await invalidateAllSessions(userUid);
     await updatePassword(userUid, body.newPassword);
+    recoverUser(userUid).then((user: User) => sendMail({
+      to: user.email,
+      subject: "👏 Félicitation, mot de passe renouvelé !",
+      template: passwordSuccessfullyReset(),
+    }).then());
   }
   catch (e) {
     if (e instanceof UserNotFoundError) return sendError(event, createError({
