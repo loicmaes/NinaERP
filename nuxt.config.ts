@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     "@nuxtjs/google-fonts",
     "@nuxtjs/tailwindcss",
     "shadcn-nuxt",
+    "nuxt-scheduler",
   ],
   eslint: {
     checker: true,
@@ -26,6 +27,10 @@ export default defineNuxtConfig({
     mailerFromName: "",
     mailerHost: "",
     mailerPort: "",
+
+    public: {
+      platformUrl: "",
+    },
   },
   vite: {
     optimizeDeps: {

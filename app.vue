@@ -1,20 +1,24 @@
 <script lang="ts" setup>
-const submitMail = async () => {
-  await $fetch("/api/email", {
-    method: "POST",
-  });
-  alert("Email sent!");
-};
+import { IconoirProvider } from "@iconoir/vue";
+import { Toaster } from "~/components/ui/toast";
+
+await useUser();
 </script>
 
 <template>
   <div>
     <NuxtRouteAnnouncer />
-    <Button
-      type="button"
-      @click="submitMail"
+    <Toaster />
+    <IconoirProvider
+      :icon-props="{
+        'width': '1rem',
+        'height': '1rem',
+        'stroke-width': '1.5',
+      }"
     >
-      Submit new mail
-    </Button>
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
+    </IconoirProvider>
   </div>
 </template>
