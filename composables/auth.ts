@@ -205,3 +205,52 @@ export async function changePassword(currentPassword: string, newPassword: strin
     }
   }
 }
+export async function changeEmailAddress(email: string) {
+  try {
+    const user = await $fetch<User>("/api/portal/auth/email", {
+      method: "PUT",
+      headers: useRequestHeaders(["cookie"]),
+      body: {
+        email,
+      },
+    });
+    if (!user) return toast.error({
+      title: "💢 Oups...",
+      description: "Je n'ai pas trouvé ton compte...",
+    });
+    useState<User>("user").value = user;
+    toast.success({
+      title: "🔔 Ding Ding",
+      description: "J'ai sauvegardé ta nouvelle adresse e-mail ! Pour des questions de sécurité, il faudrait que tu vérifie la nouvelle adresse. Regarde dans ta boîte de réception, tu as reçu un petit mot 📨",
+    });
+  }
+  catch (e) {
+    switch ((e as FetchError).statusCode) {
+      case 401:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Ta session a expiré, je ne suis plus en mesure d'assurer la sécurité de tes opérations... Reconnectes-toi avant de changer ton e-mail 😌",
+        });
+      case 403:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Tu n'as pas vérifié ton adresse e-mail, je ne peux donc pas te permettre de changer à nouveau ton adresse e-mail !",
+        });
+      case 404:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Je n'ai pas trouvé ton compte...",
+        });
+      case 409:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Tu ne peux pas réutiliser cette adresse e-mail...",
+        });
+      default:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Une erreur est survenue pendant que je changeais ton adresse e-mail...",
+        });
+    }
+  }
+}
