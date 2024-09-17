@@ -43,7 +43,7 @@ export function setAuthCookies(event: H3Event<Request>, session: AuthSession) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function useProtectedBehavior(event: H3Event<Request>, callback: (userUid: string) => Promise<any>) {
+export async function useProtectedBehavior(event: H3Event<Request>, callback: (userUid: string) => Promise<any>, verified?: boolean) {
   const authToken = getCookie(event, authTokenCookie);
   const userUid = getCookie(event, userUidCookie);
 
@@ -59,6 +59,11 @@ export async function useProtectedBehavior(event: H3Event<Request>, callback: (u
     statusCode: 401,
     statusMessage: "Tu n'es pas connecté !",
   }));
+  if (verified && !(await recoverUser(userUid)).verifiedAt) return sendError(event, createError({
+    statusCode: 403,
+    statusMessage: "Ton compte n'est pas vérifié !",
+  }));
+
   return await callback(userUid);
 }
 

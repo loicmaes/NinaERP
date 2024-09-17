@@ -15,5 +15,5 @@ export default defineEventHandler(async (event) => {
     }));
 
     return await resetUserPassword(event, userUid, body);
-  });
+  }, true);
 });
