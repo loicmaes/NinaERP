@@ -23,7 +23,7 @@ export async function useUser() {
 export async function useAuth(connected: boolean) {
   const user = useState<User>("user");
 
-  if (connected && !user.value) return await navigateTo("/portal/auth/register");
+  if (connected && !user.value) return await navigateTo("/portal/auth/login");
   if (!connected && user.value) return await navigateTo("/portal/personal/profile/me");
 }
 export async function registerAccount(payload: UserCreationBody) {
@@ -250,6 +250,34 @@ export async function changeEmailAddress(email: string) {
         return toast.error({
           title: "💢 Oups...",
           description: "Une erreur est survenue pendant que je changeais ton adresse e-mail...",
+        });
+    }
+  }
+}
+export async function deleteUserAccount() {
+  try {
+    await $fetch("/api/portal/auth/deleteAccount", {
+      method: "DELETE",
+      headers: useRequestHeaders(["cookie"]),
+    });
+    toast.success({
+      title: "Mais non... 😱",
+      description: "Je suis navrée de te voir partir ainsi... J'espère qu'on se reverra bientôt 🥺",
+    });
+    useState("user").value = null;
+    await navigateTo("/portal/auth/register");
+  }
+  catch (e) {
+    switch ((e as FetchError).statusCode) {
+      case 404:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Je n'ai pas pu trouver ton compte...",
+        });
+      default:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Une erreur est survenue !",
         });
     }
   }

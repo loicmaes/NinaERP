@@ -144,3 +144,11 @@ export async function updateUserInfo(uid: string, info: UserInfoUpdateBody): Pro
   });
   return await recoverUser(uid);
 }
+export async function deleteAccount(uid: string) {
+  if (!await recoverUser(uid)) throw new UserNotFoundError();
+  await prisma.user.delete({
+    where: {
+      uid,
+    },
+  });
+}
