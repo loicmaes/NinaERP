@@ -163,3 +163,45 @@ export async function sendNewPassword(code: string, newPassword: string) {
     }
   }
 }
+export async function changePassword(currentPassword: string, newPassword: string) {
+  try {
+    await $fetch("/api/portal/auth/password/reset", {
+      method: "PATCH",
+      headers: useRequestHeaders(["cookie"]),
+      body: {
+        currentPassword,
+        newPassword,
+      },
+    });
+    useState("user").value = null;
+    toast.success({
+      title: "Bravo 👏",
+      description: "J'ai mis ton mot de passe à jour ! J'en ai profité pour déconnecter tous les appareils connectés à ton compte, question de sécurité 🛡️",
+    });
+    await navigateTo("/portal/auth/login");
+  }
+  catch (e) {
+    switch ((e as FetchError).statusCode) {
+      case 401:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Le mot de passe actuel n'est pas correcte ! Fais attention quand tu entres ton mot de passe 😊",
+        });
+      case 404:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Je n'ai pas trouvé ton compte... Il a peut-être été supprimé par un administrateur 😱",
+        });
+      case 409:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Tu ne peux pas entrer le même mot de passe que l'actuel, fais appel à tes méninges 🫣",
+        });
+      default:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "J'ai des difficultés à mettre à jour ton mot de passe...",
+        });
+    }
+  }
+}
