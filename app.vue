@@ -1,6 +1,24 @@
+<script lang="ts" setup>
+import { IconoirProvider } from "@iconoir/vue";
+import { Toaster } from "~/components/ui/toast";
+
+await useUser();
+</script>
+
 <template>
   <div>
     <NuxtRouteAnnouncer />
-    <NuxtWelcome />
+    <Toaster />
+    <IconoirProvider
+      :icon-props="{
+        'width': '1rem',
+        'height': '1rem',
+        'stroke-width': '1.5',
+      }"
+    >
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
+    </IconoirProvider>
   </div>
 </template>

@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// AUTHENTICATION
+model User {
+  uid              String    @id @default(uuid())
+  login            String    @unique
+  email            String    @unique
+  password         String
+  verificationCode String    @default(uuid())
+  verifiedAt       DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  userInfo             UserInfo?
+  authSessions         AuthSession[]
+  passwordResetRequest PasswordResetRequest?
+
+  @@map("users")
+}
+
+model UserInfo {
+  id           Int      @id @default(autoincrement())
+  userUid      String   @unique
+  firstName    String
+  lastName     String
+  contactEmail String
+  contactPhone String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+
+  @@map("userInfos")
+}
+
+model AuthSession {
+  authToken String   @default(uuid())
+  userUid   String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  user User @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+
+  @@id([authToken, userUid])
+  @@map("authSessions")
+}
+
+model PasswordResetRequest {
+  uid       String   @id @default(uuid())
+  userUid   String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  user User @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+
+  @@map("passwordResetRequests")
+}
