@@ -282,3 +282,22 @@ export async function deleteUserAccount() {
     }
   }
 }
+export async function logout() {
+  try {
+    await $fetch("/api/portal/auth/logout", {
+      method: "POST",
+      headers: useRequestHeaders(["cookie"]),
+    });
+    useState("user").value = null;
+    await navigateTo("/portal/auth/login");
+  }
+  catch (e) {
+    switch ((e as FetchError).statusCode) {
+      default:
+        return toast.error({
+          title: "💢 Oups...",
+          description: "Une erreur est survenue pendant que je te déconnectais.",
+        });
+    }
+  }
+}

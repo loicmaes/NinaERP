@@ -54,3 +54,13 @@ export async function invalidateAllSessions(userUid: string) {
     },
   });
 }
+export async function deleteCurrentSession(authToken: string, userUid: string) {
+  await prisma.authSession.delete({
+    where: {
+      authToken_userUid: {
+        authToken,
+        userUid,
+      },
+    },
+  });
+}

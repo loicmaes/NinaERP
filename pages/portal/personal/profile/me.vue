@@ -3,6 +3,7 @@ import type { User } from "~/types/user";
 import ChangePasswordDialog from "~/components/composed/userProfile/ChangePasswordDialog.vue";
 import ChangeEmailDialog from "~/components/composed/userProfile/ChangeEmailDialog.vue";
 import DeleteAccountAlertDialog from "~/components/composed/userProfile/DeleteAccountAlertDialog.vue";
+import { logout } from "~/composables/auth";
 
 await useAuth(true);
 
@@ -30,6 +31,12 @@ const user = useState<User>("user");
         Changer mon adresse e-mail
       </Button>
     </ChangeEmailDialog>
+    <Button
+      variant="outlineDestructive"
+      @click="logout"
+    >
+      Me déconnecter
+    </Button>
     <DeleteAccountAlertDialog>
       <Button variant="destructive">
         Supprimer mon compte
