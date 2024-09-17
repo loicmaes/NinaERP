@@ -1,14 +1,19 @@
 import type { H3Event } from "h3";
-import type { User, UserCreationBody, UserEmailVerificationBody, UserLoginBody } from "~/types/user";
+import type { ResetPasswordBody, User, UserCreationBody, UserEmailVerificationBody, UserLoginBody } from "~/types/user";
 import {
   createUser,
   recoverUser,
   recoverUserByEmail,
-  recoverUserByLogin, updatePassword,
+  recoverUserByLogin, recoverUserPassword, updatePassword,
   verifyEmail,
 } from "~/server/database/repositories/user";
 import { UniqueConstraintError } from "~/types/errors";
-import { createAuthSession, isAuthenticated, recoverAuthSession } from "~/server/database/repositories/auth";
+import {
+  createAuthSession,
+  invalidateAllSessions,
+  isAuthenticated,
+  recoverAuthSession,
+} from "~/server/database/repositories/auth";
 import userVerificationCode from "~/server/email/templates/userVerificationCode";
 import { sendMail } from "~/server/services/email";
 import type { AuthSession, AuthSessionRecoverBody } from "~/types/auth";
@@ -27,7 +32,6 @@ import {
 import passwordResetRequest from "~/server/email/templates/passwordResetRequest";
 
 const authCookieParams = {
-  path: "/",
   httpOnly: true,
   secure: false, // TODO: true for prod environment
 };
@@ -215,5 +219,30 @@ export async function tryToUpdateUserPassword(event: H3Event<Request>, code: str
       statusMessage: "Une erreur s'est produite !",
     }));
     return;
+  }
+}
+export async function resetUserPassword(event: H3Event<Request>, userUid: string, body: ResetPasswordBody) {
+  try {
+    const userPassword = await recoverUserPassword(userUid);
+    if (!await verify(userPassword, body.currentPassword)) return sendError(event, createError({
+      statusCode: 401,
+      statusMessage: "Le mot de passe n'est pas correcte !",
+    }));
+    if (body.newPassword === body.currentPassword) return sendError(event, createError({
+      statusCode: 409,
+      statusMessage: "Tu ne peux pas mettre le même mot de passe !",
+    }));
+    await invalidateAllSessions(userUid);
+    await updatePassword(userUid, body.newPassword);
+  }
+  catch (e) {
+    if (e instanceof UserNotFoundError) return sendError(event, createError({
+      statusCode: 404,
+      statusMessage: "Utilisateur non trouvé !",
+    }));
+    return sendError(event, createError({
+      statusCode: 500,
+      statusMessage: "Une erreur est survenue !",
+    }));
   }
 }

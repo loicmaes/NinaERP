@@ -65,3 +65,8 @@ export interface PasswordResetRqAnswerBody {
   uid: string;
   newPassword: string;
 }
+// RESET PASSWORD
+export interface ResetPasswordBody {
+  currentPassword: string;
+  newPassword: string;
+}

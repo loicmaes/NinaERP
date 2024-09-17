@@ -47,3 +47,10 @@ export async function prunedExpiredAuthSessions() {
     },
   });
 }
+export async function invalidateAllSessions(userUid: string) {
+  await prisma.authSession.deleteMany({
+    where: {
+      userUid,
+    },
+  });
+}
