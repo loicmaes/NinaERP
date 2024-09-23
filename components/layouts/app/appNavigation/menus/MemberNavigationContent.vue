@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Dashboard, PiggyBank, Neighbourhood, Wallet } from "@iconoir/vue";
+import { Dashboard, PiggyBank, Neighbourhood, Wallet, User } from "@iconoir/vue";
 import AppNavigationLink from "~/components/layouts/app/appNavigation/AppNavigationLink.vue";
 </script>
 
@@ -20,6 +20,13 @@ import AppNavigationLink from "~/components/layouts/app/appNavigation/AppNavigat
     <AppNavigationLink to="/portal/personal/wallets">
       <Wallet />
       <span>Mes wallets</span>
+    </AppNavigationLink>
+
+    <Separator />
+
+    <AppNavigationLink to="/portal/personal/profile/me">
+      <User />
+      <span>Mon profil</span>
     </AppNavigationLink>
   </nav>
 </template>

@@ -3,29 +3,9 @@ import { Settings, LogOut } from "@iconoir/vue";
 import { DropdownMenuItem } from "~/components/ui/dropdown-menu";
 import type { User } from "~/types/user";
 import { Separator } from "~/components/ui/separator";
+import associations from "~/assets/mock/associations";
 
 const user = useState<User>("user");
-
-const associations = ref<{
-  uid: string;
-  name: string;
-  logo?: string;
-}[]>([
-  {
-    uid: "x1",
-    name: "Amicale CORE",
-    logo: "",
-  },
-  {
-    uid: "x2",
-    name: "AFGES",
-  },
-  {
-    uid: "x3",
-    name: "AIUS",
-    logo: "",
-  },
-]);
 </script>
 
 <template>
@@ -44,15 +24,18 @@ const associations = ref<{
     <DropdownMenuGroup>
       <DropdownMenuItem
         v-for="association in associations"
-        :key="`asso-${association.uid}`"
+        :key="`asso-${association.id}`"
         class="item"
         as-child
       >
         <NuxtLink to="/portal/personal/profile/me">
-          <Avatar size="xs">
+          <Avatar
+            size="xs"
+            shape="squareSmall"
+          >
             <AvatarImage
-              v-if="association.logo"
-              :src="association.logo"
+              v-if="association.avatarURL"
+              :src="association.avatarURL"
             />
             <AvatarFallback>{{ association.name.replaceAll(" ", "").substring(0, 2) }}</AvatarFallback>
           </Avatar>
@@ -79,5 +62,5 @@ const associations = ref<{
 
 <style lang="sass" scoped>
 .item
-  @apply gap-2 cursor-pointer
+  @apply gap-2 cursor-pointer pr-3
 </style>
