@@ -4,7 +4,7 @@ import type { User } from "~/types/user";
 await useAuth(true);
 
 definePageMeta({
-  layout: "default",
+  layout: "member",
 });
 useHead({
   title: "Mon profil · Nina ERP",
