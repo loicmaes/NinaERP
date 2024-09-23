@@ -13,7 +13,7 @@ await useUser();
       :icon-props="{
         'width': '1rem',
         'height': '1rem',
-        'stroke-width': '1.5',
+        'stroke-width': '2',
       }"
     >
       <NuxtLayout>
