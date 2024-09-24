@@ -5,22 +5,25 @@ import AppNavigationLink from "~/components/layouts/app/appNavigation/AppNavigat
 
 <template>
   <nav class="flex-1 flex flex-col gap-2">
-    <AppNavigationLink to="/portal/personal/overview">
+    <!-- <AppNavigationLink to="/portal/personal/overview">
       <Dashboard />
       <span>Vue d'ensemble</span>
-    </AppNavigationLink>
-    <AppNavigationLink to="/portal/personal/memberships">
+    </AppNavigationLink> -->
+    <!-- <AppNavigationLink to="/portal/personal/memberships">
       <PiggyBank />
       <span>Mes adhésions</span>
-    </AppNavigationLink>
-    <AppNavigationLink to="/portal/personal/associations">
+    </AppNavigationLink> -->
+    <AppNavigationLink
+      to="/portal/personal/associations"
+      version="0.2.0"
+    >
       <Neighbourhood />
       <span>Mes associations</span>
     </AppNavigationLink>
-    <AppNavigationLink to="/portal/personal/wallets">
+    <!-- <AppNavigationLink to="/portal/personal/wallets">
       <Wallet />
       <span>Mes wallets</span>
-    </AppNavigationLink>
+    </AppNavigationLink> -->
 
     <Separator />
 
