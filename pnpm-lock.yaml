@@ -58,7 +58,7 @@ importers:
         version: 2.5.2
       tailwindcss-animate:
         specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.4.10)
+        version: 1.0.7(tailwindcss@3.4.12)
       uuid:
         specifier: ^10.0.0
         version: 10.0.0
@@ -3919,8 +3919,8 @@ packages:
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders'
 
-  tailwindcss@3.4.10:
-    resolution: {integrity: sha512-KWZkVPm7yJRhdu4SRSl9d4AK2wM3a50UsvgHZO7xY77NQr2V+fIrEuoDGQcbvswWvFGbS2f6e+jC/6WJm1Dl0w==}
+  tailwindcss@3.4.12:
+    resolution: {integrity: sha512-Htf/gHj2+soPb9UayUNci/Ja3d8pTmu9ONTfh4QY8r3MATTZOzmv6UYWF7ZwikEIC8okpfqmGqrmDehua8mF8w==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -5400,8 +5400,8 @@ snapshots:
       pathe: 1.1.2
       postcss: 8.4.45
       postcss-nesting: 12.1.5(postcss@8.4.45)
-      tailwind-config-viewer: 2.0.4(tailwindcss@3.4.10)
-      tailwindcss: 3.4.10
+      tailwind-config-viewer: 2.0.4(tailwindcss@3.4.12)
+      tailwindcss: 3.4.12
       ufo: 1.5.4
       unctx: 2.3.1
     transitivePeerDependencies:
@@ -8740,7 +8740,7 @@ snapshots:
 
   system-architecture@0.1.0: {}
 
-  tailwind-config-viewer@2.0.4(tailwindcss@3.4.10):
+  tailwind-config-viewer@2.0.4(tailwindcss@3.4.12):
     dependencies:
       '@koa/router': 12.0.1
       commander: 6.2.1
@@ -8750,17 +8750,17 @@ snapshots:
       open: 7.4.2
       portfinder: 1.0.32
       replace-in-file: 6.3.5
-      tailwindcss: 3.4.10
+      tailwindcss: 3.4.12
     transitivePeerDependencies:
       - supports-color
 
   tailwind-merge@2.5.2: {}
 
-  tailwindcss-animate@1.0.7(tailwindcss@3.4.10):
+  tailwindcss-animate@1.0.7(tailwindcss@3.4.12):
     dependencies:
-      tailwindcss: 3.4.10
+      tailwindcss: 3.4.12
 
-  tailwindcss@3.4.10:
+  tailwindcss@3.4.12:
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
