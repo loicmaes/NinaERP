@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Menu } from "@iconoir/vue";
-import version from "assets/version";
+import { versionToString } from "assets/version";
 import {
   Sheet,
   SheetContent,
@@ -33,7 +33,7 @@ import {
       <slot />
 
       <SheetFooter>
-        <SheetDescription>{{ version }}</SheetDescription>
+        <SheetDescription>{{ versionToString() }}</SheetDescription>
       </SheetFooter>
     </SheetContent>
   </Sheet>
