@@ -6,7 +6,7 @@ export interface Version {
 
 export const version: Version = {
   major: 0,
-  minor: 2,
+  minor: 1,
   patch: 0,
 };
 
@@ -18,6 +18,10 @@ export function versionFromString(version: string): Version {
     minor: parts[1],
     patch: parts[2],
   };
+}
+export function versionToString(_version?: Version): string {
+  if (!_version) _version = version;
+  return `v${_version.major}.${_version.minor}.${_version.patch}`;
 }
 
 /**
