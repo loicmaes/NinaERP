@@ -5,11 +5,17 @@ import { Badge } from "~/components/ui/badge";
 
 const { association } = defineProps<{
   association: Association;
+  linkBase?: string;
 }>();
 </script>
 
 <template>
-  <Card>
+  <Card class="relative">
+    <NuxtLink
+      v-if="linkBase"
+      :to="`${linkBase}/${association.id}`"
+      class="absolute inset-0 z-10"
+    />
     <CardHeader class="flex-row items-center gap-4">
       <Avatar
         size="base"
@@ -27,15 +33,9 @@ const { association } = defineProps<{
         <CardDescription>Créée le {{ buildHalfDate(new Date(), { fullMonth: true }) }}</CardDescription>
       </div>
 
-      <Button
-        variant="outline"
-        class="hidden"
-        as-child
-      >
-        <NuxtLink to="/portal/personnal/profile/me">
-          Voir la page
-        </NuxtLink>
-      </Button>
+      <div class="relative z-20 flex items-center gap-2">
+        <slot name="actions" />
+      </div>
     </CardHeader>
     <CardContent>
       <p class="line-clamp-3">
